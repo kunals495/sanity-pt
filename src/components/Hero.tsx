@@ -14,7 +14,6 @@ const Hero: React.FC = () => {
   const featureCard3Ref = useRef(null);
 
   // InView hooks
-  const heroTopInView = useInView(heroTopRef, { once: true, margin: "-100px" });
   const whySectionInView = useInView(whySectionRef, { once: true, margin: "-100px" });
   const featureCard1InView = useInView(featureCard1Ref, { once: true, margin: "-50px" });
   const featureCard2InView = useInView(featureCard2Ref, { once: true, margin: "-50px" });
@@ -37,20 +36,6 @@ const Hero: React.FC = () => {
   };
 
   // Animation variants for scroll-triggered elements
-  const scrollDropIn: Variants = {
-    hidden: { 
-      y: 100, 
-      opacity: 0 
-    },
-    visible: { 
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
-  };
 
   return (
     <>

@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { sanityClient, urlFor } from '../lib/sanity';
-import type { Project } from '../types/index';
+// import { sanityClient} from '../lib/sanity';
+// import type { Project } from '../types/index';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import './Portfolio.css';
 
 const Portfolio: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  // const [projects, setProjects] = useState<Project[]>([]);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
 
@@ -70,30 +67,30 @@ const Portfolio: React.FC = () => {
     'OKX', 'UNISWAP', 'BITFINEX', 'Hyperliquid'
   ];
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await sanityClient.fetch(`
-          *[_type == "project"] | order(completedDate desc) {
-            _id,
-            title,
-            description,
-            image,
-            category,
-            technologies,
-            projectUrl,
-            githubUrl,
-            completedDate
-          }
-        `);
-        setProjects(data);
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProjects = async () => {
+  //     try {
+  //       const data = await sanityClient.fetch(`
+  //         *[_type == "project"] | order(completedDate desc) {
+  //           _id,
+  //           title,
+  //           description,
+  //           image,
+  //           category,
+  //           technologies,
+  //           projectUrl,
+  //           githubUrl,
+  //           completedDate
+  //         }
+  //       `);
+  //       setProjects(data);
+  //     } catch (error) {
+  //       console.error('Error fetching projects:', error);
+  //     }
+  //   };
 
-    fetchProjects();
-  }, []);
+  //   fetchProjects();
+  // }, []);
 
   return (
     <>
@@ -101,6 +98,7 @@ const Portfolio: React.FC = () => {
       
       <main className="portfolio-page">
         {/* Hero Section */}
+      
         <section className="portfolio-hero animate-on-scroll">
           <div className="container">
             <div className="hero-badge">DISCOVER THE ADVANTAGE</div>
