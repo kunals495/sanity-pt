@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { sanityClient } from '../lib/sanity';
 import './Footer.css';
 
@@ -53,19 +54,19 @@ const Footer: React.FC = () => {
     {
       _id: '2',
       question: 'Why is scalability important in software development?',
-      answer: "Scalable systems allow businesses to grow without re-engineering their core products. Malnutdesigns applications that handle increased users, data, and complexity while maintaining consistent performance.",
+      answer: "Scalable systems allow businesses to grow without re-engineering their core products. Malnut designs applications that handle increased users, data, and complexity while maintaining consistent performance.",
       order: 2
     },
     {
       _id: '3',
-      question: 'How does Malnut’s engagement model benefit clients?',
+      question: 'How does Malnuts engagement model benefit clients?',
       answer: 'Malnut focuses on transparent, outcome-driven pricing rather than hidden costs or unnecessary complexity. This allows clients to plan confidently while receiving enterprise-grade development and support.',
       order: 3
     },
     {
       _id: '4',
-      question: "What does Malnut’s onboarding process look like?",
-      answer: 'Malnut’s onboarding process is simple and efficient. We quickly understand your requirements, align on goals, and begin development with minimal setup—so you can move from idea to execution fast.',
+      question: "What does Malnut's onboarding process look like?",
+      answer: 'Malnuts onboarding process is simple and efficient. We quickly understand your requirements, align on goals, and begin development with minimal setup—so you can move from idea to execution fast.',
       order: 4
     }
   ];
@@ -80,14 +81,13 @@ const Footer: React.FC = () => {
     { _id: 'l2', name: 'Privacy Policy', href: '#', category: 'legal', order: 2 }
   ];
 
-  const companyLinksDum : CompanyLinks[] = 
-    [
-          { _id: 'c1', name: 'Home', href: '/', category: 'company', order: 1 },
-          { _id: 'c2', name: 'Projects', href: '/Portfolio', category: 'company', order: 2 },
-          { _id: 'c3', name: 'Services', href: '/Services', category: 'company', order: 3 },
-          { _id: 'c4', name: 'About', href: '/about', category: 'company', order: 4 },
-          { _id: 'c5', name: 'Contact', href: '/contact', category: 'company', order: 5 },
-    ];
+  const companyLinksDum: CompanyLinks[] = [
+    { _id: 'c1', name: 'Home', href: '/', category: 'company', order: 1 },
+    { _id: 'c2', name: 'Projects', href: '/portfolio', category: 'company', order: 2 },
+    { _id: 'c3', name: 'Services', href: '/services', category: 'company', order: 3 },
+    { _id: 'c4', name: 'About', href: '/about', category: 'company', order: 4 },
+    { _id: 'c5', name: 'Contact', href: '/contact', category: 'company', order: 5 },
+  ];
 
   useEffect(() => {
     // Set dummy data immediately
@@ -144,6 +144,11 @@ const Footer: React.FC = () => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
+  // Helper function to check if link is external
+  const isExternalLink = (href: string) => {
+    return href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:');
+  };
+
   return (
     <footer className="footer-new">
       {/* FAQ Section */}
@@ -196,7 +201,7 @@ const Footer: React.FC = () => {
               <h2 className="demo-title">Schedule a Demo</h2>
               <p className="demo-subtitle">Realize The Advantage</p>
             </div>
-            <button className="demo-btn">Book Demo Now</button>
+            <Link to="/contact" className="demo-btn">Book Demo Now</Link>
           </div>
         </div>
       </motion.section>
@@ -216,7 +221,7 @@ const Footer: React.FC = () => {
               <h3 className="footer-column-title">About Us</h3>
               <div className="footer-email">
                 <span>Email</span>
-                <a href="mailto:sales@freelancer.io">
+                <a href="mailto:malnutglobal@gmail.com">
                   malnutglobal@gmail.com
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -231,7 +236,13 @@ const Footer: React.FC = () => {
               <ul className="footer-links">
                 {companyLinks.map((link) => (
                   <li key={link._id}>
-                    <a href={link.href}>{link.name}</a>
+                    {isExternalLink(link.href) ? (
+                      <a href={link.href} target="_blank" rel="noopener noreferrer">
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link to={link.href}>{link.name}</Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -243,7 +254,9 @@ const Footer: React.FC = () => {
               <ul className="footer-links">
                 {socialLinks.map((link) => (
                   <li key={link._id}>
-                    <a href={link.href}>{link.name}</a>
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
+                      {link.name}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -255,7 +268,13 @@ const Footer: React.FC = () => {
               <ul className="footer-links">
                 {legalLinks.map((link) => (
                   <li key={link._id}>
-                    <a href={link.href}>{link.name}</a>
+                    {isExternalLink(link.href) ? (
+                      <a href={link.href} target="_blank" rel="noopener noreferrer">
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link to={link.href}>{link.name}</Link>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -53,40 +53,38 @@ const Navbar: React.FC = () => {
         </Link>
 
         <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-          {navLinks.map((link, index) => (
-            <motion.a
-              key={link.name}
-              href={link.href}
-              className="nav-link"
-              onClick={handleLinkClick}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              {link.name}
-            </motion.a>
+          {navLinks.map((link) => (
+            <motion.div key={link.name}>
+              <Link
+                to={link.href}
+                className="nav-link"
+                onClick={handleLinkClick}
+              >
+                {link.name}
+              </Link>
+            </motion.div>
           ))}
         </div>
 
         <div className="book-demo-wrapper">
-          <a href="/contact" className="book-demo-btn" onClick={handleLinkClick}>
+          <Link to="/contact" className="book-demo-btn" onClick={handleLinkClick}>
             <span className="btn-border-animation"></span>
             <span className="btn-border-animation-2"></span>
             <span className="btn-text">Book Demo</span>
-          </a>
+          </Link>
         </div>
 
-        { !isMobileMenuOpen && (
-        <button
-          className={`mobile-menu-btn ${isMobileMenuOpen ? 'active' : ''}`}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-        </button>)
-       }
+        {!isMobileMenuOpen && (
+          <button
+            className={`mobile-menu-btn ${isMobileMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+        )}
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -111,17 +109,20 @@ const Navbar: React.FC = () => {
             
             <div className="mobile-nav-links">
               {navLinks.map((link, index) => (
-                <motion.a
+                <motion.div
                   key={link.name}
-                  href={link.href}
-                  className="mobile-nav-link"
-                  onClick={handleLinkClick}
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  {link.name}
-                </motion.a>
+                  <Link
+                    to={link.href}
+                    className="mobile-nav-link"
+                    onClick={handleLinkClick}
+                  >
+                    {link.name}
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
