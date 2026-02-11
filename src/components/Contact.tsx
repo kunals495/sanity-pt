@@ -1,186 +1,310 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import Navbar from './Navbar';
+import Footer from './Footer';
 import './Contact.css';
+import { sanityClient } from '../lib/sanity';
 
 const Contact: React.FC = () => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    subject: '',
-    message: ''
+    companyName: '',
+    interests: [] as string[],
+    message: '',
+    newsletter: false
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const checkbox = e.target as HTMLInputElement;
+      if (name === 'newsletter') {
+        setFormData({
+          ...formData,
+          newsletter: checkbox.checked
+        });
+      } else {
+        const updatedInterests = checkbox.checked
+          ? [...formData.interests, value]
+          : formData.interests.filter(item => item !== value);
+        setFormData({
+          ...formData,
+          interests: updatedInterests
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission - Replace with actual API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setSubmitStatus('success');
-      setIsSubmitting(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+
+      // Submit to Sanity
+      const doc = {
+        _type: 'contactSubmission',
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        companyName: formData.companyName,
+        interests: formData.interests,
+        message: formData.message,
+        newsletter: formData.newsletter,
+        submittedAt: new Date().toISOString(),
+        status: 'new'
+      };
+
+      await sanityClient.create(doc);
+
+      // Success
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your message! We\'ll get back to you soon.'
+      });
+
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        companyName: '',
+        interests: [],
+        message: '',
+        newsletter: false
+      });
+
+      // Clear checkboxes
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        (checkbox as HTMLInputElement).checked = false;
+      });
+
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
       
-      setTimeout(() => setSubmitStatus('idle'), 3000);
-    }, 1500);
+      // Provide specific error messages
+      let errorMessage = 'There was an error submitting your message. Please try again or email us directly at sales@goquant.io';
+      
+      if (error.message?.includes('token')) {
+        errorMessage = 'Configuration error. Please contact the site administrator.';
+      } else if (error.message?.includes('permission')) {
+        errorMessage = 'Permission error. Please contact the site administrator.';
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
+      
+      setSubmitStatus({
+        type: 'error',
+        message: errorMessage
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section className="contact section bg-gradient" id="contact" ref={ref}>
-      <div className="container">
-        <motion.div
-          className="contact-header"
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="section-title">Let's Work Together</h2>
-          <p className="contact-subtitle">
-            Have a project in mind? Let's discuss how I can help bring your ideas to life
-          </p>
-        </motion.div>
+    <>
+      <Navbar />
+      
+      <main className="contact-page">
+        <section className="contact-hero">
+          <div className="container">
+            <div className="contact-badge">Contact</div>
+            <h1 className="contact-title">Get in touch</h1>
+            <p className="contact-subtitle">Questions or feedback? Our team is here to help.</p>
+          </div>
+        </section>
 
-        <div className="contact-content">
-          <motion.div
-            className="contact-info"
-            initial={{ opacity: 0, x: -50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <div className="info-card card">
-              <div className="info-icon">📧</div>
-              <h3>Email Me</h3>
-              <p>your.email@example.com</p>
-              <a href="mailto:your.email@example.com" className="info-link">
-                Send Email →
-              </a>
+        <section className="contact-content-section">
+          <div className="container">
+            <div className="contact-grid">
+              {/* Left Side - Form */}
+              <div className="contact-form-wrapper">
+                <form onSubmit={handleSubmit} className="contact-form">
+                  {submitStatus.type && (
+                    <div className={`submit-status ${submitStatus.type}`}>
+                      {submitStatus.message}
+                    </div>
+                  )}
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="firstName">
+                        First name <span className="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder="Enter first name"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="lastName">
+                        Last name <span className="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder="Enter last name"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="email">
+                      Email <span className="required">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Enter email"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="companyName">
+                      Company Name <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="companyName"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      placeholder="Enter company name"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>
+                      Interested in <span className="required">*</span>
+                    </label>
+                    <div className="checkbox-group">
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="interest"
+                          value="Market data"
+                          onChange={handleChange}
+                          disabled={isSubmitting}
+                        />
+                        <span className="checkbox-custom"></span>
+                        Market data
+                      </label>
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="interest"
+                          value="OEMS"
+                          onChange={handleChange}
+                          disabled={isSubmitting}
+                        />
+                        <span className="checkbox-custom"></span>
+                        OEMS
+                      </label>
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="interest"
+                          value="RMS/PMS"
+                          onChange={handleChange}
+                          disabled={isSubmitting}
+                        />
+                        <span className="checkbox-custom"></span>
+                        RMS/PMS
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="message">Message</label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Enter message"
+                      rows={5}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="newsletter"
+                        checked={formData.newsletter}
+                        onChange={handleChange}
+                        disabled={isSubmitting}
+                      />
+                      <span className="checkbox-custom"></span>
+                      Subscribe to Newsletter
+                    </label>
+                  </div>
+
+                  <button type="submit" className="submit-button" disabled={isSubmitting}>
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                  </button>
+                </form>
+              </div>
+
+              {/* Right Side - Chat Info */}
+              <div className="contact-info-wrapper">
+                <div className="chat-card">
+                  <div className="chat-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="chat-title">Chat with us</h3>
+                  <p className="chat-description">Get in touch over email.</p>
+                  <a href="mailto:sales@goquant.io" className="chat-email">
+                    sales@goquant.io
+                  </a>
+                </div>
+              </div>
             </div>
+          </div>
+        </section>
+      </main>
 
-            <div className="info-card card">
-              <div className="info-icon">💼</div>
-              <h3>LinkedIn</h3>
-              <p>Connect with me professionally</p>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="info-link">
-                View Profile →
-              </a>
-            </div>
-
-            <div className="info-card card">
-              <div className="info-icon">💻</div>
-              <h3>GitHub</h3>
-              <p>Check out my code</p>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="info-link">
-                View Projects →
-              </a>
-            </div>
-
-            <div className="availability-badge">
-              <div className="status-dot"></div>
-              <span>Available for freelance work</span>
-            </div>
-          </motion.div>
-
-          <motion.form
-            className="contact-form card"
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, x: 50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <div className="form-group">
-              <label htmlFor="name">Your Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Your Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="john@example.com"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-              <input
-                type="text"
-                id="subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                placeholder="Project Inquiry"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="message">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={6}
-                placeholder="Tell me about your project..."
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary submit-btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
-            </button>
-
-            {submitStatus === 'success' && (
-              <motion.div
-                className="submit-message success"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                ✓ Message sent successfully! I'll get back to you soon.
-              </motion.div>
-            )}
-
-            {submitStatus === 'error' && (
-              <motion.div
-                className="submit-message error"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                ✗ Something went wrong. Please try again.
-              </motion.div>
-            )}
-          </motion.form>
-        </div>
-      </div>
-    </section>
+      <Footer />
+    </>
   );
 };
 

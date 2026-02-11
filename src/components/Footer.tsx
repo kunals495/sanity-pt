@@ -1,85 +1,273 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { sanityClient } from '../lib/sanity';
 import './Footer.css';
+
+interface FAQ {
+  _id: string;
+  question: string;
+  answer: string;
+  order: number;
+}
+
+interface FooterLink {
+  _id: string;
+  name: string;
+  href: string;
+  category: 'company' | 'social' | 'legal';
+  order: number;
+}
+
+interface CompanyLinks {
+  _id: string;
+  name: string;
+  href: string;
+  category: 'company';
+  order: number;
+}
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [footerLinks, setFooterLinks] = useState<FooterLink[]>([]);
+  const [companyLinks, setCompanyLinks] = useState<CompanyLinks[]>([]);
 
-  const socialLinks = [
-    { name: 'GitHub', icon: '📦', url: 'https://github.com' },
-    { name: 'LinkedIn', icon: '💼', url: 'https://linkedin.com' },
-    { name: 'Twitter', icon: '🐦', url: 'https://twitter.com' },
-    { name: 'Dribbble', icon: '🎨', url: 'https://dribbble.com' }
+  // Refs for scroll animations
+  const faqRef = useRef(null);
+  const demoRef = useRef(null);
+  const footerRef = useRef(null);
+
+  const faqInView = useInView(faqRef, { once: true, margin: "-100px" });
+  const demoInView = useInView(demoRef, { once: true, margin: "-100px" });
+  const footerInView = useInView(footerRef, { once: true, margin: "-100px" });
+
+  // Dummy data as fallback
+  const dummyFaqs: FAQ[] = [
+    {
+      _id: '1',
+      question: 'How does Malnut deliver high-quality software?',
+      answer: 'Malnut follows an engineering-first approach using modern architectures, clean code practices, and scalable technology stacks. Every solution is built for performance, security, and long-term maintainability.',
+      order: 1
+    },
+    {
+      _id: '2',
+      question: 'Why is scalability important in software development?',
+      answer: "Scalable systems allow businesses to grow without re-engineering their core products. Malnutdesigns applications that handle increased users, data, and complexity while maintaining consistent performance.",
+      order: 2
+    },
+    {
+      _id: '3',
+      question: 'How does Malnut’s engagement model benefit clients?',
+      answer: 'Malnut focuses on transparent, outcome-driven pricing rather than hidden costs or unnecessary complexity. This allows clients to plan confidently while receiving enterprise-grade development and support.',
+      order: 3
+    },
+    {
+      _id: '4',
+      question: "What does Malnut’s onboarding process look like?",
+      answer: 'Malnut’s onboarding process is simple and efficient. We quickly understand your requirements, align on goals, and begin development with minimal setup—so you can move from idea to execution fast.',
+      order: 4
+    }
   ];
 
-  const quickLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
-    { name: 'Work', href: '#work' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' }
+  const dummyFooterLinks: FooterLink[] = [
+    // Social links
+    { _id: 's1', name: 'LinkedIn', href: 'https://www.linkedin.com/company/malnut/', category: 'social', order: 1 },
+    { _id: 's2', name: 'Instagram', href: 'https://www.instagram.com/malnutglobal/', category: 'social', order: 2 },
+    { _id: 's3', name: 'Malnut on X', href: 'https://x.com/malnutglobal', category: 'social', order: 3 },
+    // Legal links
+    { _id: 'l1', name: 'Terms & Conditions', href: '#', category: 'legal', order: 1 },
+    { _id: 'l2', name: 'Privacy Policy', href: '#', category: 'legal', order: 2 }
   ];
+
+  const companyLinksDum : CompanyLinks[] = 
+    [
+          { _id: 'c1', name: 'Home', href: '/', category: 'company', order: 1 },
+          { _id: 'c2', name: 'Projects', href: '/Portfolio', category: 'company', order: 2 },
+          { _id: 'c3', name: 'Services', href: '/Services', category: 'company', order: 3 },
+          { _id: 'c4', name: 'About', href: '/about', category: 'company', order: 4 },
+          { _id: 'c5', name: 'Contact', href: '/contact', category: 'company', order: 5 },
+    ];
+
+  useEffect(() => {
+    // Set dummy data immediately
+    setFaqs(dummyFaqs);
+    setFooterLinks(dummyFooterLinks);
+    setCompanyLinks(companyLinksDum);
+
+    // Fetch real data from Sanity
+    const fetchData = async () => {
+      try {
+        // Fetch FAQs
+        const faqData = await sanityClient.fetch(`
+          *[_type == "faq"] | order(order asc) {
+            _id,
+            question,
+            answer,
+            order
+          }
+        `);
+
+        // Fetch Footer Links
+        const linksData = await sanityClient.fetch(`
+          *[_type == "footerLink"] | order(order asc) {
+            _id,
+            name,
+            href,
+            category,
+            order
+          }
+        `);
+
+        // Replace dummy data with real data when available
+        if (faqData && faqData.length > 0) {
+          setFaqs(faqData);
+        }
+
+        if (linksData && linksData.length > 0) {
+          setFooterLinks(linksData);
+        }
+      } catch (error) {
+        console.error('Error fetching footer data from Sanity:', error);
+        // Keep dummy data on error
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter links by category
+  const socialLinks = footerLinks.filter(link => link.category === 'social');
+  const legalLinks = footerLinks.filter(link => link.category === 'legal');
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
   return (
-    <footer className="footer">
-      <div className="footer-waves">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" className="wave-fill"></path>
-          <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" className="wave-fill"></path>
-          <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" className="wave-fill"></path>
-        </svg>
-      </div>
-
-      <div className="container footer-content">
-        <div className="footer-top">
-          <div className="footer-brand">
-            <div className="footer-logo">
-              <span className="logo-icon">⚡</span>
-              <span className="logo-text">
-                Your<span className="gradient-text">Portfolio</span>
-              </span>
-            </div>
-            <p className="footer-tagline">
-              Transforming ideas into exceptional digital experiences
-            </p>
-          </div>
-
-          <div className="footer-links">
-            <h4>Quick Links</h4>
-            <ul>
-              {quickLinks.map(link => (
-                <li key={link.name}>
-                  <a href={link.href}>{link.name}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="footer-social">
-            <h4>Follow Me</h4>
-            <div className="social-links">
-              {socialLinks.map(social => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  aria-label={social.name}
+    <footer className="footer-new">
+      {/* FAQ Section */}
+      <motion.section 
+        ref={faqRef}
+        className="faq-section-new"
+        initial={{ opacity: 0, y: 100 }}
+        animate={faqInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="container-new">
+          <h2 className="faq-title">Frequently Asked Questions</h2>
+          
+          <div className="faq-grid">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={faq._id}
+                className={`faq-card ${openFaq === index ? 'active' : ''}`}
+                initial={{ opacity: 0, y: 50 }}
+                animate={faqInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <button
+                  className="faq-header"
+                  onClick={() => toggleFaq(index)}
                 >
-                  <span className="social-icon">{social.icon}</span>
-                </a>
-              ))}
-            </div>
+                  <span className="faq-question-text">{faq.question}</span>
+                  <span className="faq-toggle">+</span>
+                </button>
+                <div className={`faq-answer ${openFaq === index ? 'open' : ''}`}>
+                  <p>{faq.answer}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
+      </motion.section>
 
-        <div className="footer-bottom">
-          <p>&copy; {currentYear} YourName. All rights reserved.</p>
-          <p className="footer-credit">
-            Built with <span className="heart">❤️</span> using React & TypeScript
-          </p>
+      {/* Schedule Demo Section */}
+      <motion.section 
+        ref={demoRef}
+        className="demo-section-new"
+        initial={{ opacity: 0, y: 100 }}
+        animate={demoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+      >
+        <div className="container-new">
+          <div className="demo-card">
+            <div className="demo-content">
+              <h2 className="demo-title">Schedule a Demo</h2>
+              <p className="demo-subtitle">Realize The Advantage</p>
+            </div>
+            <button className="demo-btn">Book Demo Now</button>
+          </div>
         </div>
-      </div>
+      </motion.section>
+
+      {/* Footer Bottom Section */}
+      <motion.section 
+        ref={footerRef}
+        className="footer-bottom-section"
+        initial={{ opacity: 0, y: 100 }}
+        animate={footerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+      >
+        <div className="container-new">
+          <div className="footer-grid">
+            {/* About Us */}
+            <div className="footer-column">
+              <h3 className="footer-column-title">About Us</h3>
+              <div className="footer-email">
+                <span>Email</span>
+                <a href="mailto:sales@freelancer.io">
+                  malnutglobal@gmail.com
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            {/* Company */}
+            <div className="footer-column">
+              <h3 className="footer-column-title">Company</h3>
+              <ul className="footer-links">
+                {companyLinks.map((link) => (
+                  <li key={link._id}>
+                    <a href={link.href}>{link.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Social Media */}
+            <div className="footer-column">
+              <h3 className="footer-column-title">Social Media</h3>
+              <ul className="footer-links">
+                {socialLinks.map((link) => (
+                  <li key={link._id}>
+                    <a href={link.href}>{link.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div className="footer-column">
+              <h3 className="footer-column-title">Legal</h3>
+              <ul className="footer-links">
+                {legalLinks.map((link) => (
+                  <li key={link._id}>
+                    <a href={link.href}>{link.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="footer-copyright">
+            <p>&copy; {currentYear} Malnut. All rights reserved.</p>
+          </div>
+        </div>
+      </motion.section>
     </footer>
   );
 };

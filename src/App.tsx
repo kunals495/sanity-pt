@@ -1,27 +1,30 @@
-import About from './components/About'
-import Contact from './components/Contact'
-import Footer from './components/Footer'    
-import Hero from './components/Hero'
-import Navbar from './components/Navbar'
-import Portfolio from './components/Portfolio'
-import Services from './components/Services'
-import Testimonials from './components/Testimonials'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Hero from './components/Hero';
+import Services from './components/Services';
+import Portfolio from './components/Portfolio';
+import Testimonials from './components/Testimonials';
+import About from './components/About';
+import Contact from './components/Contact';
+import './App.css';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Services />
-      <Portfolio />
-      <Testimonials />
-      <Contact />
-      <Footer />
-    </>
-  )
-}
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={
+              <Hero />
+          } />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
 
-export default App
+export default App;

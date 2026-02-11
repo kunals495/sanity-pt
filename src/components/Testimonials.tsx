@@ -34,37 +34,37 @@ const Testimonials: React.FC = () => {
             _id: '1',
             clientName: 'Sarah Johnson',
             clientRole: 'CEO',
-            clientCompany: 'TechStart Inc.',
-            testimonialText: 'Working with this freelancer was an absolute pleasure! They delivered our e-commerce platform ahead of schedule with exceptional quality. The attention to detail and communication throughout the project was outstanding.',
+            clientCompany: 'TechVentures Inc.',
+            testimonialText: 'The trading platform exceeded all our expectations. The performance is incredible and our clients love the intuitive interface. This has transformed how we operate in the digital assets space.',
             rating: 5,
-            projectType: 'E-commerce Development'
+            projectType: 'Trading Platform Development'
           },
           {
             _id: '2',
             clientName: 'Michael Chen',
-            clientRole: 'Product Manager',
-            clientCompany: 'FinanceApp',
-            testimonialText: 'I\'ve worked with many developers, but this one stands out. The mobile app they built for us exceeded all expectations. Clean code, beautiful UI, and excellent performance. Highly recommended!',
+            clientRole: 'CTO',
+            clientCompany: 'CryptoFund',
+            testimonialText: 'Outstanding work on our analytics dashboard. The real-time data visualization and performance metrics have given us a competitive edge. Highly professional team with deep technical expertise.',
             rating: 5,
-            projectType: 'Mobile App Development'
+            projectType: 'Analytics Dashboard'
           },
           {
             _id: '3',
             clientName: 'Emma Williams',
-            clientRole: 'Marketing Director',
-            clientCompany: 'Creative Studio',
-            testimonialText: 'Amazing work on our website redesign! The new site is not only visually stunning but also significantly improved our conversion rates. Professional, responsive, and truly talented.',
+            clientRole: 'Product Director',
+            clientCompany: 'DigitalAssets Pro',
+            testimonialText: 'Working with this team was seamless from start to finish. They delivered a robust API infrastructure that scales perfectly with our growing user base. The documentation and support are exceptional.',
             rating: 5,
-            projectType: 'Web Design & Development'
+            projectType: 'API Development'
           },
           {
             _id: '4',
             clientName: 'David Rodriguez',
             clientRole: 'Founder',
-            clientCompany: 'FitLife',
-            testimonialText: 'The API integration work was flawless. Complex requirements were handled with expertise and the documentation provided was comprehensive. Will definitely work together again!',
+            clientCompany: 'BlockChain Solutions',
+            testimonialText: 'The mobile wallet app they built is secure, fast, and beautifully designed. Our users have given overwhelmingly positive feedback. The team\'s expertise in blockchain technology is evident.',
             rating: 5,
-            projectType: 'API Development'
+            projectType: 'Mobile Wallet Development'
           }
         ];
         setTestimonials(demoTestimonials);
@@ -79,7 +79,7 @@ const Testimonials: React.FC = () => {
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [testimonials.length]);
@@ -109,7 +109,7 @@ const Testimonials: React.FC = () => {
         >
           <h2 className="section-title">Client Testimonials</h2>
           <p className="testimonials-subtitle">
-            What my clients say about working with me
+            What our clients say about their experience working with us
           </p>
         </motion.div>
 

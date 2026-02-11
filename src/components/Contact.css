@@ -1,193 +1,447 @@
-.contact {
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+  --color-primary: #00ff88;
+  --color-primary-dark: #00cc6a;
+  --color-secondary: #00d4ff;
+  --color-accent: #0099ff;
+  
+  --color-bg-dark: #0a0e14;
+  --color-bg-darker: #050810;
+  --color-bg-card: #151a24;
+  --color-bg-card-hover: #1a2030;
+  
+  --color-text-light: #ffffff;
+  --color-text-gray: #9ca3af;
+  --color-text-muted: #6b7280;
+  
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(0, 255, 136, 0.3);
+  
+  --font-display: 'Clash Display', 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   Contact Page
+   ============================================ */
+.contact-page {
+  min-height: 100vh;
+  background: var(--color-bg-darker);
+}
+
+/* ============================================
+   Contact Hero Section
+   ============================================ */
+.contact-hero {
+  padding: 7rem 0 3.5rem;
+  text-align: center;
   position: relative;
+  overflow: hidden;
 }
 
-.contact-header {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 4rem;
-}
-
-.contact-subtitle {
-  font-size: 1.2rem;
+.contact-badge {
+  display: inline-block;
+  padding: 0.4rem 1.2rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--color-text-gray);
-  margin-top: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.contact-content {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  gap: 3rem;
-  align-items: start;
-}
-
-.contact-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  position: sticky;
-  top: 100px;
-}
-
-.info-card {
-  padding: 2rem;
-  text-align: center;
-  transition: var(--transition-smooth);
-}
-
-.info-card:hover {
-  transform: translateY(-5px) scale(1.02);
-}
-
-.info-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.info-card h3 {
+.contact-title {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem 0;
   color: var(--color-text-light);
 }
 
-.info-card p {
+.contact-subtitle {
+  font-size: clamp(0.95rem, 1.8vw, 1.125rem);
   color: var(--color-text-gray);
-  margin-bottom: 1rem;
+  margin: 0;
 }
 
-.info-link {
-  color: var(--color-primary);
-  text-decoration: none;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: var(--transition-smooth);
+/* ============================================
+   Contact Content Section
+   ============================================ */
+.contact-content-section {
+  padding: 3rem 0 6rem;
 }
 
-.info-link:hover {
-  gap: 1rem;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.availability-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  border-radius: 50px;
-  color: #22c55e;
-  font-weight: 600;
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.status-dot {
-  width: 10px;
-  height: 10px;
-  background: #22c55e;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.2);
-  }
+/* ============================================
+   Contact Form
+   ============================================ */
+.contact-form-wrapper {
+  width: 100%;
+  max-width: 650px;
 }
 
 .contact-form {
-  padding: 2.5rem;
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--color-text-light);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.required {
+  color: var(--color-primary);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 1rem 1.25rem;
-  background: var(--color-bg-darker);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  padding: 0.8rem 0.95rem;
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: var(--color-text-light);
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: var(--transition-smooth);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-text-muted);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary);
-  background: var(--color-bg-card);
+  border-color: rgba(0, 212, 255, 0.4);
+  background: rgba(21, 26, 36, 0.8);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 150px;
+  min-height: 120px;
+  font-family: var(--font-body);
 }
 
-.submit-btn {
-  width: 100%;
-  margin-top: 1rem;
+/* ============================================
+   Checkbox Styles
+   ============================================ */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
   cursor: pointer;
+  position: relative;
+  padding-left: 0;
+  user-select: none;
 }
 
-.submit-btn:disabled {
+.checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-bg-darker);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkbox-label:hover .checkbox-custom {
+  border-color: rgba(0, 212, 255, 0.5);
+}
+
+/* ============================================
+   Submit Button
+   ============================================ */
+.submit-button {
+  width: 100%;
+  padding: 0.95rem 2rem;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-bg-darker);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  margin-top: 0.75rem;
+}
+
+.submit-button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   Chat Info Card
+   ============================================ */
+.contact-info-wrapper {
+  position: sticky;
+  top: 100px;
+}
+
+.chat-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: left;
+}
+
+.chat-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  color: var(--color-secondary);
+}
+
+.chat-title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin: 0 0 0.5rem 0;
+}
+
+.chat-description {
+  font-size: 0.9rem;
+  color: var(--color-text-gray);
+  margin: 0 0 1.25rem 0;
+}
+
+.chat-email {
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.chat-email:hover {
+  color: var(--color-secondary);
+}
+
+.submit-status {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.submit-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.submit-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.submit-message {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: 600;
+.form-group input:disabled,
+.form-group textarea:disabled,
+.checkbox-label input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.submit-message.success {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
 
-.submit-message.error {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-@media (max-width: 968px) {
-  .contact-content {
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1024px) {
+  .contact-grid {
     grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .contact-info-wrapper {
+    position: static;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .contact-form-wrapper {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-hero {
+    padding: 5rem 0 2.5rem;
+  }
+
+  .contact-content-section {
+    padding: 2.5rem 0 5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .chat-card {
+    padding: 1.75rem;
   }
   
-  .contact-info {
-    position: static;
-    grid-row: 2;
+  .contact-grid {
+    gap: 2rem;
   }
 }
 
 @media (max-width: 640px) {
-  .contact-form {
-    padding: 1.5rem;
+  .container {
+    padding: 0 1.5rem;
   }
+
+  .contact-title {
+    font-size: 2.5rem;
+  }
+
+  .contact-grid {
+    gap: 2rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem;
+  }
+
+  .submit-button {
+    padding: 0.875rem 1.5rem;
+  }
+
+  .chat-icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for accessibility */
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+.checkbox-label input[type="checkbox"]:focus-visible + .checkbox-custom {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
 }
